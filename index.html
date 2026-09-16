@@ -3,91 +3,118 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aplikasi Kasir, Hutang & Stok Opname</title>
+  <title>Kasir & Manajemen Stok</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-6">
-  <div class="max-w-6xl mx-auto space-y-8">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans pb-12">
+
+  <!-- Navbar -->
+  <header class="bg-slate-900 text-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold">K</div>
+        <h1 class="text-lg font-semibold tracking-wide">Kasir & Manajemen Toko</h1>
+      </div>
+      <span class="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 border border-slate-700">Client-Side Storage</span>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 mt-8 space-y-8">
     
-    <header class="text-center bg-blue-600 text-white p-6 rounded-lg shadow-md">
-      <h1 class="text-3xl font-bold">Aplikasi Kasir & Stok Opname</h1>
-      <p class="text-sm">Manajemen Hutang, Kembalian Kasir, & Selisih Stok</p>
-    </header>
-
-    <!-- 1. MODUL KASIR & KEMBALIAN -->
-    <section class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">1. Kasir & Hitung Uang Kembalian</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <!-- MODUL 1: KASIR & KEMBALIAN -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+          Kalkulator Kasir & Kembalian
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <label class="block text-sm font-medium">Total Belanja (Rp)</label>
-          <input type="number" id="totalBelanja" oninput="hitungKembalian()" class="w-full border p-2 rounded" placeholder="0">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Total Belanja (Rp)</label>
+          <input type="number" id="totalBelanja" oninput="hitungKembalian()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="0">
         </div>
         <div>
-          <label class="block text-sm font-medium">Uang Diterima (Rp)</label>
-          <input type="number" id="uangDiterima" oninput="hitungKembalian()" class="w-full border p-2 rounded" placeholder="0">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Uang Diterima (Rp)</label>
+          <input type="number" id="uangDiterima" oninput="hitungKembalian()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="0">
         </div>
         <div>
-          <label class="block text-sm font-medium">Uang Kembalian (Rp)</label>
-          <input type="text" id="uangKembalian" readonly class="w-full border p-2 rounded bg-gray-100 font-bold text-lg text-blue-600" value="0">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Uang Kembalian</label>
+          <input type="text" id="uangKembalian" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-3 font-bold text-lg text-slate-700" value="Rp 0">
         </div>
       </div>
     </section>
 
-    <!-- 2. MODUL PENCATATAN HUTANG -->
-    <section class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">2. Pencatatan Hutang (CRUD)</h2>
-      <form id="formHutang" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <input type="text" id="namaPenghutang" placeholder="Nama Penghutang" required class="border p-2 rounded">
-        <input type="number" id="nominalHutang" placeholder="Nominal (Rp)" required class="border p-2 rounded">
-        <input type="date" id="tanggalHutang" required class="border p-2 rounded">
-        <button type="submit" class="bg-green-600 text-white font-bold p-2 rounded hover:bg-green-700">+ Tambah Hutang</button>
-      </form>
+    <!-- GRID DUA KOLOM (HUTANG & STOK) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- MODUL 2: PENCATATAN HUTANG -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            Pencatatan Hutang
+          </h2>
+          <form id="formHutang" class="space-y-4 mb-6">
+            <input type="text" id="namaPenghutang" placeholder="Nama Penghutang" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <div class="grid grid-cols-2 gap-4">
+              <input type="number" id="nominalHutang" placeholder="Nominal (Rp)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <input type="date" id="tanggalHutang" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium p-3 rounded-xl text-sm transition">+ Tambah Catatan Hutang</button>
+          </form>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse border">
-          <thead>
-            <tr class="bg-gray-200">
-              <th class="border p-2">Nama</th>
-              <th class="border p-2">Nominal</th>
-              <th class="border p-2">Tanggal</th>
-              <th class="border p-2">Status</th>
-              <th class="border p-2">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="tabelHutang"></tbody>
-        </table>
-      </div>
-    </section>
+          <div class="overflow-x-auto border border-slate-100 rounded-xl">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                <tr>
+                  <th class="p-3 font-medium">Nama</th>
+                  <th class="p-3 font-medium">Nominal</th>
+                  <th class="p-3 font-medium">Status</th>
+                  <th class="p-3 font-medium text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabelHutang" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <!-- 3. MODUL SELISIH STOK BARANG -->
-    <section class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">3. Penyesuaian / Selisih Stok (Opname)</h2>
-      <form id="formStok" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <input type="text" id="namaBarang" placeholder="Nama Barang" required class="border p-2 rounded">
-        <input type="number" id="stokSistem" placeholder="Stok Sistem" required class="border p-2 rounded">
-        <input type="number" id="stokFisik" placeholder="Stok Fisik" required class="border p-2 rounded">
-        <input type="text" id="ketStok" placeholder="Keterangan (opsional)" class="border p-2 rounded">
-        <button type="submit" class="bg-indigo-600 text-white font-bold p-2 rounded hover:bg-indigo-700">+ Catat Opname</button>
-      </form>
+      <!-- MODUL 3: SELISIH STOK -->
+      <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            Selisih Stok Barang (Opname)
+          </h2>
+          <form id="formStok" class="space-y-4 mb-6">
+            <input type="text" id="namaBarang" placeholder="Nama Barang" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <div class="grid grid-cols-2 gap-4">
+              <input type="number" id="stokSistem" placeholder="Stok Sistem" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <input type="number" id="stokFisik" placeholder="Stok Fisik" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            </div>
+            <input type="text" id="ketStok" placeholder="Keterangan (Opsional: Rusak/Hilang)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium p-3 rounded-xl text-sm transition">+ Simpan Opname Stok</button>
+          </form>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse border">
-          <thead>
-            <tr class="bg-gray-200">
-              <th class="border p-2">Barang</th>
-              <th class="border p-2">Stok Sistem</th>
-              <th class="border p-2">Stok Fisik</th>
-              <th class="border p-2">Selisih</th>
-              <th class="border p-2">Keterangan</th>
-              <th class="border p-2">Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="tabelStok"></tbody>
-        </table>
-      </div>
-    </section>
+          <div class="overflow-x-auto border border-slate-100 rounded-xl">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
+                <tr>
+                  <th class="p-3 font-medium">Barang</th>
+                  <th class="p-3 font-medium">Sistem/Fisik</th>
+                  <th class="p-3 font-medium">Selisih</th>
+                  <th class="p-3 font-medium text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabelStok" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-  </div>
+    </div>
+  </main>
 
   <script>
     // --- 1. LOGIKA KASIR ---
@@ -99,10 +126,10 @@
       const selisih = bayar - total;
       if (selisih < 0) {
         kembalianInput.value = "Kurang Rp " + Math.abs(selisih).toLocaleString('id-ID');
-        kembalianInput.className = "w-full border p-2 rounded bg-red-100 font-bold text-lg text-red-600";
+        kembalianInput.className = "w-full bg-red-50 border border-red-200 rounded-xl p-3 font-bold text-lg text-red-600";
       } else {
         kembalianInput.value = "Rp " + selisih.toLocaleString('id-ID');
-        kembalianInput.className = "w-full border p-2 rounded bg-green-100 font-bold text-lg text-green-600";
+        kembalianInput.className = "w-full bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-bold text-lg text-emerald-600";
       }
     }
 
@@ -117,20 +144,23 @@
     function renderHutang() {
       const tbody = document.getElementById('tabelHutang');
       tbody.innerHTML = '';
+      if(dataHutang.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada data hutang</td></tr>`;
+        return;
+      }
       dataHutang.forEach((item, index) => {
         tbody.innerHTML += `
-          <tr>
-            <td class="border p-2">${item.nama}</td>
-            <td class="border p-2">Rp ${parseInt(item.nominal).toLocaleString('id-ID')}</td>
-            <td class="border p-2">${item.tanggal}</td>
-            <td class="border p-2">
-              <span class="px-2 py-1 text-xs rounded ${item.lunas ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
-                ${item.lunas ? 'Lunas' : 'Belum Lunas'}
+          <tr class="hover:bg-slate-50/50">
+            <td class="p-3 font-medium text-slate-900">${item.nama}<br><span class="text-xs text-slate-400 font-normal">${item.tanggal}</span></td>
+            <td class="p-3 text-slate-600">Rp ${parseInt(item.nominal).toLocaleString('id-ID')}</td>
+            <td class="p-3">
+              <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${item.lunas ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                ${item.lunas ? 'Lunas' : 'Belum'}
               </span>
             </td>
-            <td class="border p-2 space-x-1">
-              <button onclick="toggleLunas(${index})" class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Status</button>
-              <button onclick="hapusHutang(${index})" class="bg-red-500 text-white text-xs px-2 py-1 rounded">Hapus</button>
+            <td class="p-3 text-right space-x-2">
+              <button onclick="toggleLunas(${index})" class="text-indigo-600 hover:text-indigo-800 text-xs font-medium">Status</button>
+              <button onclick="hapusHutang(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-medium">Hapus</button>
             </td>
           </tr>
         `;
@@ -170,21 +200,23 @@
     function renderStok() {
       const tbody = document.getElementById('tabelStok');
       tbody.innerHTML = '';
+      if(dataStok.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada data selisih stok</td></tr>`;
+        return;
+      }
       dataStok.forEach((item, index) => {
         const selisih = item.fisik - item.sistem;
-        let warnaSelisih = 'text-gray-700';
-        if (selisih < 0) warnaSelisih = 'text-red-600 font-bold';
-        if (selisih > 0) warnaSelisih = 'text-green-600 font-bold';
+        let badgeSelisih = `<span class="text-slate-600 font-medium">0</span>`;
+        if (selisih < 0) badgeSelisih = `<span class="text-rose-600 font-bold">${selisih}</span>`;
+        if (selisih > 0) badgeSelisih = `<span class="text-emerald-600 font-bold">+${selisih}</span>`;
 
         tbody.innerHTML += `
-          <tr>
-            <td class="border p-2">${item.nama}</td>
-            <td class="border p-2">${item.sistem}</td>
-            <td class="border p-2">${item.fisik}</td>
-            <td class="border p-2 ${warnaSelisih}">${selisih > 0 ? '+' + selisih : selisih}</td>
-            <td class="border p-2">${item.ket || '-'}</td>
-            <td class="border p-2">
-              <button onclick="hapusStok(${index})" class="bg-red-500 text-white text-xs px-2 py-1 rounded">Hapus</button>
+          <tr class="hover:bg-slate-50/50">
+            <td class="p-3 font-medium text-slate-900">${item.nama}<br><span class="text-xs text-slate-400 font-normal">${item.ket || 'Tanpa keterangan'}</span></td>
+            <td class="p-3 text-slate-600 text-xs">Sistem: ${item.sistem}<br>Fisik: ${item.fisik}</td>
+            <td class="p-3">${badgeSelisih}</td>
+            <td class="p-3 text-right">
+              <button onclick="hapusStok(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-medium">Hapus</button>
             </td>
           </tr>
         `;
@@ -208,7 +240,6 @@
       simpanStok();
     }
 
-    // Initial Load
     renderHutang();
     renderStok();
   </script>
