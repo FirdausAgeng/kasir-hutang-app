@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aplikasi Kasir, Hutang & Stok Opname</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto space-y-8">
+    
+    <header class="text-center bg-blue-600 text-white p-6 rounded-lg shadow-md">
+      <h1 class="text-3xl font-bold">Aplikasi Kasir & Stok Opname</h1>
+      <p class="text-sm">Manajemen Hutang, Kembalian Kasir, & Selisih Stok</p>
+    </header>
+
+    <!-- 1. MODUL KASIR & KEMBALIAN -->
+    <section class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">1. Kasir & Hitung Uang Kembalian</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium">Total Belanja (Rp)</label>
+          <input type="number" id="totalBelanja" oninput="hitungKembalian()" class="w-full border p-2 rounded" placeholder="0">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Uang Diterima (Rp)</label>
+          <input type="number" id="uangDiterima" oninput="hitungKembalian()" class="w-full border p-2 rounded" placeholder="0">
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Uang Kembalian (Rp)</label>
+          <input type="text" id="uangKembalian" readonly class="w-full border p-2 rounded bg-gray-100 font-bold text-lg text-blue-600" value="0">
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. MODUL PENCATATAN HUTANG -->
+    <section class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">2. Pencatatan Hutang (CRUD)</h2>
+      <form id="formHutang" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <input type="text" id="namaPenghutang" placeholder="Nama Penghutang" required class="border p-2 rounded">
+        <input type="number" id="nominalHutang" placeholder="Nominal (Rp)" required class="border p-2 rounded">
+        <input type="date" id="tanggalHutang" required class="border p-2 rounded">
+        <button type="submit" class="bg-green-600 text-white font-bold p-2 rounded hover:bg-green-700">+ Tambah Hutang</button>
+      </form>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse border">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border p-2">Nama</th>
+              <th class="border p-2">Nominal</th>
+              <th class="border p-2">Tanggal</th>
+              <th class="border p-2">Status</th>
+              <th class="border p-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelHutang"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. MODUL SELISIH STOK BARANG -->
+    <section class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">3. Penyesuaian / Selisih Stok (Opname)</h2>
+      <form id="formStok" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <input type="text" id="namaBarang" placeholder="Nama Barang" required class="border p-2 rounded">
+        <input type="number" id="stokSistem" placeholder="Stok Sistem" required class="border p-2 rounded">
+        <input type="number" id="stokFisik" placeholder="Stok Fisik" required class="border p-2 rounded">
+        <input type="text" id="ketStok" placeholder="Keterangan (opsional)" class="border p-2 rounded">
+        <button type="submit" class="bg-indigo-600 text-white font-bold p-2 rounded hover:bg-indigo-700">+ Catat Opname</button>
+      </form>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse border">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border p-2">Barang</th>
+              <th class="border p-2">Stok Sistem</th>
+              <th class="border p-2">Stok Fisik</th>
+              <th class="border p-2">Selisih</th>
+              <th class="border p-2">Keterangan</th>
+              <th class="border p-2">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tabelStok"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // --- 1. LOGIKA KASIR ---
+    function hitungKembalian() {
+      const total = parseFloat(document.getElementById('totalBelanja').value) || 0;
+      const bayar = parseFloat(document.getElementById('uangDiterima').value) || 0;
+      const kembalianInput = document.getElementById('uangKembalian');
+      
+      const selisih = bayar - total;
+      if (selisih < 0) {
+        kembalianInput.value = "Kurang Rp " + Math.abs(selisih).toLocaleString('id-ID');
+        kembalianInput.className = "w-full border p-2 rounded bg-red-100 font-bold text-lg text-red-600";
+      } else {
+        kembalianInput.value = "Rp " + selisih.toLocaleString('id-ID');
+        kembalianInput.className = "w-full border p-2 rounded bg-green-100 font-bold text-lg text-green-600";
+      }
+    }
+
+    // --- 2. LOGIKA CRUD HUTANG ---
+    let dataHutang = JSON.parse(localStorage.getItem('dataHutang')) || [];
+
+    function simpanHutang() {
+      localStorage.setItem('dataHutang', JSON.stringify(dataHutang));
+      renderHutang();
+    }
+
+    function renderHutang() {
+      const tbody = document.getElementById('tabelHutang');
+      tbody.innerHTML = '';
+      dataHutang.forEach((item, index) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="border p-2">${item.nama}</td>
+            <td class="border p-2">Rp ${parseInt(item.nominal).toLocaleString('id-ID')}</td>
+            <td class="border p-2">${item.tanggal}</td>
+            <td class="border p-2">
+              <span class="px-2 py-1 text-xs rounded ${item.lunas ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}">
+                ${item.lunas ? 'Lunas' : 'Belum Lunas'}
+              </span>
+            </td>
+            <td class="border p-2 space-x-1">
+              <button onclick="toggleLunas(${index})" class="bg-blue-500 text-white text-xs px-2 py-1 rounded">Status</button>
+              <button onclick="hapusHutang(${index})" class="bg-red-500 text-white text-xs px-2 py-1 rounded">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById('formHutang').addEventListener('submit', function(e) {
+      e.preventDefault();
+      dataHutang.push({
+        nama: document.getElementById('namaPenghutang').value,
+        nominal: document.getElementById('nominalHutang').value,
+        tanggal: document.getElementById('tanggalHutang').value,
+        lunas: false
+      });
+      simpanHutang();
+      this.reset();
+    });
+
+    function toggleLunas(index) {
+      dataHutang[index].lunas = !dataHutang[index].lunas;
+      simpanHutang();
+    }
+
+    function hapusHutang(index) {
+      dataHutang.splice(index, 1);
+      simpanHutang();
+    }
+
+    // --- 3. LOGIKA STOK OPNAME ---
+    let dataStok = JSON.parse(localStorage.getItem('dataStok')) || [];
+
+    function simpanStok() {
+      localStorage.setItem('dataStok', JSON.stringify(dataStok));
+      renderStok();
+    }
+
+    function renderStok() {
+      const tbody = document.getElementById('tabelStok');
+      tbody.innerHTML = '';
+      dataStok.forEach((item, index) => {
+        const selisih = item.fisik - item.sistem;
+        let warnaSelisih = 'text-gray-700';
+        if (selisih < 0) warnaSelisih = 'text-red-600 font-bold';
+        if (selisih > 0) warnaSelisih = 'text-green-600 font-bold';
+
+        tbody.innerHTML += `
+          <tr>
+            <td class="border p-2">${item.nama}</td>
+            <td class="border p-2">${item.sistem}</td>
+            <td class="border p-2">${item.fisik}</td>
+            <td class="border p-2 ${warnaSelisih}">${selisih > 0 ? '+' + selisih : selisih}</td>
+            <td class="border p-2">${item.ket || '-'}</td>
+            <td class="border p-2">
+              <button onclick="hapusStok(${index})" class="bg-red-500 text-white text-xs px-2 py-1 rounded">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById('formStok').addEventListener('submit', function(e) {
+      e.preventDefault();
+      dataStok.push({
+        nama: document.getElementById('namaBarang').value,
+        sistem: parseInt(document.getElementById('stokSistem').value),
+        fisik: parseInt(document.getElementById('stokFisik').value),
+        ket: document.getElementById('ketStok').value
+      });
+      simpanStok();
+      this.reset();
+    });
+
+    function hapusStok(index) {
+      dataStok.splice(index, 1);
+      simpanStok();
+    }
+
+    // Initial Load
+    renderHutang();
+    renderStok();
+  </script>
+</body>
+</html>
