@@ -1,355 +1,47 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aplikasi Kasir & Toko</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body class="bg-slate-100 font-sans text-slate-800 flex h-screen overflow-hidden">
-
-  <!-- SIDEBAR -->
-  <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between hidden md:flex shadow-xl">
-    <div>
-      <div class="p-6 flex items-center space-x-3 border-b border-slate-800">
-        <div class="bg-indigo-600 text-white p-2.5 rounded-xl font-bold shadow-lg shadow-indigo-500/30">
-          <i class="fa-solid fa-cash-register"></i>
-        </div>
-        <div>
-          <h1 class="font-bold text-white tracking-wide">KasirApp</h1>
-          <p class="text-xs text-slate-500">v2.0 Pro Dashboard</p>
-        </div>
-      </div>
-      <nav class="p-4 space-y-1.5">
-        <button onclick="switchTab('kasir')" id="nav-kasir" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
-          <i class="fa-solid fa-calculator w-5"></i>
-          <span>Kasir & Kembalian</span>
-        </button>
-        <button onclick="switchTab('hutang')" id="nav-hutang" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition hover:bg-slate-800 text-slate-400 hover:text-white">
-          <i class="fa-solid fa-book-bookmark w-5"></i>
-          <span>Pencatatan Hutang</span>
-        </button>
-        <button onclick="switchTab('stok')" id="nav-stok" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition hover:bg-slate-800 text-slate-400 hover:text-white">
-          <i class="fa-solid fa-boxes-stacked w-5"></i>
-          <span>Selisih Stok (Opname)</span>
-        </button>
-      </nav>
-    </div>
-    <div class="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
-      Client-Side GitHub Edition
-    </div>
-  </aside>
-
-  <!-- MAIN WRAPPER -->
-  <div class="flex-1 flex flex-col h-screen overflow-hidden">
+<!-- NAVBAR -->
+<header class="bg-slate-900 border-b border-slate-800 h-16 flex items-center justify-between px-4 md:px-6 shadow-md text-white sticky top-0 z-30">
+  
+  <!-- Left Side: Brand Logo & Title -->
+  <div class="flex items-center space-x-3">
+    <!-- Mobile Menu Toggle Button (Hanya muncul di Layar HP) -->
+    <button id="btn-toggle-sidebar" onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+      <i class="fa-solid fa-bars text-lg"></i>
+    </button>
     
-    <!-- NAVBAR -->
-    <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm z-10">
-      <div class="flex items-center space-x-3">
-        <span id="page-title" class="font-bold text-lg text-slate-900">Kalkulator Kasir & Kembalian</span>
+    <!-- App Logo & Name -->
+    <div class="flex items-center space-x-2.5">
+      <div class="bg-indigo-600 text-white p-2 rounded-xl font-bold shadow-md shadow-indigo-500/20 flex items-center justify-center w-8 h-8">
+        <i class="fa-solid fa-cash-register text-sm"></i>
       </div>
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
-          A
-        </div>
-        <span class="text-sm font-medium text-slate-700 hidden sm:inline">Admin Toko</span>
+      <div>
+        <h1 id="page-title" class="font-bold text-base md:text-lg tracking-wide leading-tight">KasirApp Pro</h1>
+        <p class="text-[10px] text-slate-400 hidden sm:block">Manajemen Toko & Kasir</p>
       </div>
-    </header>
-
-    <!-- CONTENT AREA -->
-    <main class="flex-1 overflow-y-auto p-6 md:p-8">
-      
-      <!-- TAB 1: KASIR -->
-      <section id="tab-content-kasir" class="space-y-6 max-w-4xl">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-calculator text-indigo-600"></i> Hitung Uang Kembalian Pelanggan
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Total Belanja (Rp)</label>
-              <input type="number" id="totalBelanja" oninput="hitungKembalian()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="0">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Uang Diterima (Rp)</label>
-              <input type="number" id="uangDiterima" oninput="hitungKembalian()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="0">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Uang Kembalian</label>
-              <input type="text" id="uangKembalian" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl p-3 font-bold text-lg text-slate-700" value="Rp 0">
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 2: HUTANG -->
-      <section id="tab-content-hutang" class="space-y-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Form Input -->
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-            <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <i class="fa-solid fa-user-plus text-amber-500"></i> Tambah Hutang Baru
-            </h2>
-            <form id="formHutang" class="space-y-4">
-              <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Penghutang</label>
-                <input type="text" id="namaPenghutang" placeholder="Contoh: Budi" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nominal (Rp)</label>
-                <input type="number" id="nominalHutang" placeholder="50000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Jatuh Tempo</label>
-                <input type="date" id="tanggalHutang" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-3 rounded-xl text-sm shadow-lg shadow-indigo-600/20 transition">Simpan Hutang</button>
-            </form>
-          </div>
-          <!-- Tabel Data -->
-          <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-base font-bold text-slate-900 mb-4">Daftar Buku Hutang</h2>
-            <div class="overflow-x-auto border border-slate-100 rounded-xl">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
-                  <tr>
-                    <th class="p-3 font-medium">Nama / Tanggal</th>
-                    <th class="p-3 font-medium">Nominal</th>
-                    <th class="p-3 font-medium">Status</th>
-                    <th class="p-3 font-medium text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="tabelHutang" class="divide-y divide-slate-100"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TAB 3: STOK OPNAME -->
-      <section id="tab-content-stok" class="space-y-6 hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Form Input -->
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
-            <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <i class="fa-solid fa-boxes-stacked text-emerald-500"></i> Cek Selisih Stok
-            </h2>
-            <form id="formStok" class="space-y-4">
-              <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Nama Barang</label>
-                <input type="text" id="namaBarang" placeholder="Contoh: Sabun Mandi" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stok Sistem</label>
-                  <input type="number" id="stokSistem" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-                <div>
-                  <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Stok Fisik</label>
-                  <input type="number" id="stokFisik" placeholder="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Keterangan</label>
-                <input type="text" id="ketStok" placeholder="Contoh: Hilang / Rusak" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-              </div>
-              <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium p-3 rounded-xl text-sm shadow-lg shadow-indigo-600/20 transition">Catat Opname</button>
-            </form>
-          </div>
-          <!-- Tabel Data -->
-          <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-base font-bold text-slate-900 mb-4">Riwayat Selisih Stok</h2>
-            <div class="overflow-x-auto border border-slate-100 rounded-xl">
-              <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-500 border-b border-slate-100">
-                  <tr>
-                    <th class="p-3 font-medium">Barang & Info</th>
-                    <th class="p-3 font-medium">Sistem / Fisik</th>
-                    <th class="p-3 font-medium">Selisih</th>
-                    <th class="p-3 font-medium text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="tabelStok" class="divide-y divide-slate-100"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </main>
+    </div>
   </div>
 
-  <script>
-    // --- NAVIGASI TAB ---
-    function switchTab(tab) {
-      ['kasir', 'hutang', 'stok'].forEach(t => {
-        document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`nav-${t}`).className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition hover:bg-slate-800 text-slate-400 hover:text-white";
-      });
-      document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
-      document.getElementById(`nav-${tab}`).className = "w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
-      
-      const titles = { kasir: 'Kalkulator Kasir & Kembalian', hutang: 'Pencatatan Hutang Pelanggan', stok: 'Manajemen Selisih Stok Barang' };
-      document.getElementById('page-title').innerText = titles[tab];
-    }
+  <!-- Right Side: Search / Actions / User Info -->
+  <div class="flex items-center space-x-3">
+    
+    <!-- Status Badge Online -->
+    <span class="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium">
+      <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> LocalStorage Mode
+    </span>
 
-    // --- KASIR ---
-    function hitungKembalian() {
-      const total = parseFloat(document.getElementById('totalBelanja').value) || 0;
-      const bayar = parseFloat(document.getElementById('uangDiterima').value) || 0;
-      const kembalianInput = document.getElementById('uangKembalian');
-      
-      const selisih = bayar - total;
-      if (selisih < 0) {
-        kembalianInput.value = "Kurang Rp " + Math.abs(selisih).toLocaleString('id-ID');
-        kembalianInput.className = "w-full bg-rose-50 border border-rose-200 rounded-xl p-3 font-bold text-lg text-rose-600";
-      } else {
-        kembalianInput.value = "Rp " + selisih.toLocaleString('id-ID');
-        kembalianInput.className = "w-full bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-bold text-lg text-emerald-600";
-      }
-    }
+    <!-- Divider -->
+    <div class="h-6 w-[1px] bg-slate-800 hidden sm:block"></div>
 
-    // --- CRUD HUTANG ---
-    let dataHutang = JSON.parse(localStorage.getItem('dataHutang')) || [];
+    <!-- User Profile Dropdown / Card -->
+    <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700/50 cursor-pointer transition">
+      <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-inner">
+        A
+      </div>
+      <div class="text-left hidden md:block">
+        <p class="text-xs font-semibold text-slate-200 leading-none">Admin Toko</p>
+        <p class="text-[10px] text-slate-400 leading-none mt-1">Petugas Kasir</p>
+      </div>
+    </div>
 
-    function simpanHutang() {
-      localStorage.setItem('dataHutang', JSON.stringify(dataHutang));
-      renderHutang();
-    }
+  </div>
 
-    function renderHutang() {
-      const tbody = document.getElementById('tabelHutang');
-      tbody.innerHTML = '';
-      if(dataHutang.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">Belum ada data hutang</td></tr>`;
-        return;
-      }
-      dataHutang.forEach((item, index) => {
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50/50">
-            <td class="p-3 font-medium text-slate-900">${item.nama}<br><span class="text-xs text-slate-400 font-normal">Tempo: ${item.tanggal}</span></td>
-            <td class="p-3 text-slate-600">Rp ${parseInt(item.nominal).toLocaleString('id-ID')}</td>
-            <td class="p-3">
-              <span class="px-2.5 py-1 text-xs font-semibold rounded-full ${item.lunas ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
-                ${item.lunas ? 'Lunas' : 'Belum Lunas'}
-              </span>
-            </td>
-            <td class="p-3 text-right space-x-2">
-              <button onclick="toggleLunas(${index})" class="text-indigo-600 hover:text-indigo-800 text-xs font-medium">Status</button>
-              <button onclick="hapusHutang(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-medium">Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    document.getElementById('formHutang').addEventListener('submit', function(e) {
-      e.preventDefault();
-      dataHutang.push({
-        nama: document.getElementById('namaPenghutang').value,
-        nominal: document.getElementById('nominalHutang').value,
-        tanggal: document.getElementById('tanggalHutang').value,
-        lunas: false
-      });
-      simpanHutang();
-      this.reset();
-      Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Catatan hutang tersimpan!', timer: 1500, showConfirmButton: false });
-    });
-
-    function toggleLunas(index) {
-      dataHutang[index].lunas = !dataHutang[index].lunas;
-      simpanHutang();
-      Swal.fire({ icon: 'success', title: 'Status Diperbarui', timer: 1000, showConfirmButton: false });
-    }
-
-    function hapusHutang(index) {
-      Swal.fire({
-        title: 'Hapus data ini?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#4f46e5',
-        cancelButtonColor: '#ef4444',
-        confirmButtonText: 'Ya, Hapus'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          dataHutang.splice(index, 1);
-          simpanHutang();
-          Swal.fire({ icon: 'success', title: 'Terhapus!', timer: 1000, showConfirmButton: false });
-        }
-      });
-    }
-
-    // --- STOK OPNAME ---
-    let dataStok = JSON.parse(localStorage.getItem('dataStok')) || [];
-
-    function simpanStok() {
-      localStorage.setItem('dataStok', JSON.stringify(dataStok));
-      renderStok();
-    }
-
-    function renderStok() {
-      const tbody = document.getElementById('tabelStok');
-      tbody.innerHTML = '';
-      if(dataStok.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">Belum ada data selisih stok</td></tr>`;
-        return;
-      }
-      dataStok.forEach((item, index) => {
-        const selisih = item.fisik - item.sistem;
-        let badgeSelisih = `<span class="text-slate-600 font-medium">0</span>`;
-        if (selisih < 0) badgeSelisih = `<span class="text-rose-600 font-bold">${selisih}</span>`;
-        if (selisih > 0) badgeSelisih = `<span class="text-emerald-600 font-bold">+${selisih}</span>`;
-
-        tbody.innerHTML += `
-          <tr class="hover:bg-slate-50/50">
-            <td class="p-3 font-medium text-slate-900">${item.nama}<br><span class="text-xs text-slate-400 font-normal">${item.ket || 'Tanpa keterangan'}</span></td>
-            <td class="p-3 text-slate-600 text-xs">Sistem: ${item.sistem} | Fisik: ${item.fisik}</td>
-            <td class="p-3">${badgeSelisih}</td>
-            <td class="p-3 text-right">
-              <button onclick="hapusStok(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-medium">Hapus</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    document.getElementById('formStok').addEventListener('submit', function(e) {
-      e.preventDefault();
-      dataStok.push({
-        nama: document.getElementById('namaBarang').value,
-        sistem: parseInt(document.getElementById('stokSistem').value),
-        fisik: parseInt(document.getElementById('stokFisik').value),
-        ket: document.getElementById('ketStok').value
-      });
-      simpanStok();
-      this.reset();
-      Swal.fire({ icon: 'success', title: 'Berhasil', text: 'Opname stok tersimpan!', timer: 1500, showConfirmButton: false });
-    });
-
-    function hapusStok(index) {
-      Swal.fire({
-        title: 'Hapus data ini?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#4f46e5',
-        cancelButtonColor: '#ef4444',
-        confirmButtonText: 'Ya, Hapus'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          dataStok.splice(index, 1);
-          simpanStok();
-          Swal.fire({ icon: 'success', title: 'Terhapus!', timer: 1000, showConfirmButton: false });
-        }
-      });
-    }
-
-    renderHutang();
-    renderStok();
-  </script>
-</body>
-</html>
+</header>
